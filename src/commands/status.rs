@@ -59,7 +59,8 @@ fn collect_status(commit: &str) -> Vec<FileStatus> {
 fn render_changes(ins: usize, del: usize) -> String {
     let ins_str = "■".repeat(ins).green().to_string();
     let del_str = "■".repeat(del).red().to_string();
-    format!("{}{}", ins_str, del_str)
+    let changes_count = ins + del;
+    format!("{} {}{}", changes_count,ins_str, del_str)
 }
 
 
@@ -70,7 +71,7 @@ pub fn status(commit: &str) {
     } else {
         for f in files {
             println!(
-                "{}  {:<20} {}",
+                "{}  {:<20} | {}",
                 f.patch_type.display(),
                 f.file,
                 render_changes(f.insertions, f.deletions)

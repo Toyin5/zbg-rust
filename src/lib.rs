@@ -8,7 +8,8 @@ pub mod models;
 pub fn run(){
     let args: Vec<String> = env::args().collect();
     if args.len() <= 1 {
-        exit(1);
+        println!("No command provided");
+        exit(0);
     }
     if args[1].eq("status") {
         status(&"HEAD");
