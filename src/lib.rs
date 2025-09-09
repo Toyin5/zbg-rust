@@ -1,11 +1,11 @@
 use std::{env, process::exit};
 
 use crate::commands::status::status;
-pub mod utils;
 pub mod commands;
 pub mod models;
+pub mod utils;
 
-pub fn run(){
+pub fn run() {
     let args: Vec<String> = env::args().collect();
     if args.len() <= 1 {
         println!("No command provided");
@@ -13,7 +13,7 @@ pub fn run(){
     }
     if args[1].eq("status") {
         status(&"HEAD");
-    }else{
+    } else {
         println!("{} command not supported yet", args[1]);
     }
 }
