@@ -12,7 +12,7 @@ pub fn run() {
         exit(0);
     }
     if args[1].eq("status") {
-        status(&"HEAD");
+        status("HEAD");
     } else {
         println!("{} command not supported yet", args[1]);
     }

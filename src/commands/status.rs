@@ -1,6 +1,6 @@
 use colored::Colorize;
 
-use crate::models::file_status::{FileStatus};
+use crate::models::file_status::FileStatus;
 use crate::models::patch_type::PatchType;
 use crate::utils::run_git;
 
@@ -12,7 +12,7 @@ fn get_file_statuses(commit: &str) -> Vec<(String, PatchType)> {
             let mut parts = line.split_whitespace();
             let kind = parts.next()?;
             let file = parts.collect::<Vec<_>>().join(" ");
-            PatchType::from_str(kind).map(|pt| (file, pt))
+            PatchType::from_string(kind).map(|pt| (file, pt))
         })
         .collect()
 }
@@ -36,19 +36,17 @@ fn get_file_stats(commit: &str) -> Vec<(String, usize, usize)> {
 fn get_untracked_diff_stat(file: &str) -> Option<(usize, usize)> {
     let output = run_git(&["diff", "--no-index", "--stat", "/dev/null", file]);
 
-    output
-        .lines()
-        .find_map(|line| {
-            if let Some(idx) = line.find('|') {
-                let parts: Vec<&str> = line[idx + 1..].split_whitespace().collect();
-                if let Some(signs) = parts.last() {
-                    let pluses = signs.chars().filter(|&c| c == '+').count();
-                    let minuses = signs.chars().filter(|&c| c == '-').count();
-                    return Some((pluses, minuses));
-                }
+    output.lines().find_map(|line| {
+        if let Some(idx) = line.find('|') {
+            let parts: Vec<&str> = line[idx + 1..].split_whitespace().collect();
+            if let Some(signs) = parts.last() {
+                let pluses = signs.chars().filter(|&c| c == '+').count();
+                let minuses = signs.chars().filter(|&c| c == '-').count();
+                return Some((pluses, minuses));
             }
-            None
-        })
+        }
+        None
+    })
 }
 
 fn get_untracked_files() -> Vec<FileStatus> {
@@ -58,12 +56,12 @@ fn get_untracked_files() -> Vec<FileStatus> {
         .map(|file| {
             let (insertions, deletions) = get_untracked_diff_stat(file).unwrap_or((0, 0));
             FileStatus {
-            patch_type: PatchType::Added,
-            file: file.to_string(),
-            insertions,
-            deletions,
-        }
-    })
+                patch_type: PatchType::Added,
+                file: file.to_string(),
+                insertions,
+                deletions,
+            }
+        })
         .collect()
 }
 

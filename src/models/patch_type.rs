@@ -14,7 +14,7 @@ pub enum PatchType {
 }
 
 impl PatchType {
-    pub fn from_str(s: &str) -> Option<Self> {
+    pub fn from_string(s: &str) -> Option<Self> {
         match s.chars().next()? {
             'A' => Some(Self::Added),
             'C' => Some(Self::Copied),
@@ -39,7 +39,7 @@ impl PatchType {
             Self::TypeChanged => "type-changed".cyan().bold().to_string(),
             Self::Unmerged => "unmerged".bold().to_string(),
             Self::Unknown => "unknown".bold().to_string(),
-            Self::BrokenPairing => "broken".bold().to_string()
+            Self::BrokenPairing => "broken".bold().to_string(),
         }
     }
 }
