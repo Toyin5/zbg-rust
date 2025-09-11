@@ -1,6 +1,6 @@
 use std::{env, process::exit};
 
-use crate::commands::status::status;
+use crate::commands::{log::log, status::status, add::git_add};
 pub mod commands;
 pub mod models;
 pub mod utils;
@@ -19,11 +19,19 @@ pub fn run() {
         } else {
             vec![]
         };
-        match commands::add::git_add(&files) {
+        match git_add(&files) {
             Ok(_) => {},
             Err(e) => eprintln!("Error adding files: {}", e),
         }
-    } else {
+    }else if args[1].eq("log"){
+        let limit = if args.len() > 2 {
+            args[2].parse::<usize>().unwrap_or(5)
+        } else {
+            5
+        };
+        log(limit);
+    } 
+    else {
         println!("{} command not supported yet", args[1]);
     }
 }
