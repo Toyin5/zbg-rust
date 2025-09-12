@@ -1,6 +1,6 @@
 use std::{env, process::exit};
 
-use crate::commands::{log::log, status::status, add::git_add};
+use crate::commands::{add::git_add, clear::clear, log::log, status::status};
 pub mod commands;
 pub mod models;
 pub mod utils;
@@ -30,7 +30,9 @@ pub fn run() {
             5
         };
         log(limit);
-    } 
+    } else if args[1].eq("clear"){
+        clear();
+    }
     else {
         println!("{} command not supported yet", args[1]);
     }
