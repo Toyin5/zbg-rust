@@ -1,6 +1,6 @@
 use std::{env, process::exit};
 
-use crate::commands::{add::git_add, clear::clear, log::log, status::status};
+use crate::commands::{add::git_add, clear::clear, commit::commit, log::log, status::status};
 pub mod commands;
 pub mod models;
 pub mod utils;
@@ -32,6 +32,14 @@ pub fn run() {
         log(limit);
     } else if args[1].eq("clear"){
         clear();
+    }
+    else if args[1].eq("commit"){
+        if args.len() < 3 {
+            eprintln!("Commit message is required");
+            exit(0);
+        }
+        let message = &args[2];
+        commit(message);
     }
     else {
         println!("{} command not supported yet", args[1]);
