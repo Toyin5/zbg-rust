@@ -1,6 +1,6 @@
 use std::{env, process::exit};
 
-use crate::commands::{add::git_add, clear::clear, commit::commit, log::log, status::status, new::new};
+use crate::commands::{add::git_add, clear::clear, commit::commit, log::log, new::new, status::status, sync::{sync, sync_force}};
 pub mod commands;
 pub mod models;
 pub mod utils;
@@ -48,6 +48,18 @@ pub fn run() {
         }
         let branch_name = &args[2];
         new(branch_name);
+    }
+    else if args[1].eq("sync"){
+        let flag = if args.len() > 2 {
+            args[2].as_str()
+        } else {
+            ""
+        };
+        if flag == "--force" || flag == "-f" {
+            sync_force();
+        } else {
+            sync();
+        }
     }
     else {
         println!("{} command not supported yet", args[1]);
