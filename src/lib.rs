@@ -1,6 +1,6 @@
 use std::{env, process::exit};
 
-use crate::commands::{add::git_add, clear::clear, commit::commit, log::log, new::new, status::status, sync::{sync, sync_force}};
+use crate::commands::{add::git_add, clear::clear, commit::commit, log::log, new::new, status::status, sync::{sync, sync_force}, tag::tag};
 pub mod commands;
 pub mod models;
 pub mod utils;
@@ -60,6 +60,18 @@ pub fn run() {
         } else {
             sync();
         }
+    }
+    else if args[1].eq("tag"){
+         if args.len() < 3 {
+            eprintln!("Tag name is required");
+            exit(0);
+        }
+        let desc = if args.len() > 2{
+            args[2].as_str()
+        }else{
+            ""
+        };
+        tag(desc);
     }
     else {
         println!("{} command not supported yet", args[1]);

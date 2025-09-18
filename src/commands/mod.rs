@@ -5,3 +5,4 @@ pub mod clear;
 pub mod commit;
 pub mod new;
 pub mod sync;
+pub mod tag;
