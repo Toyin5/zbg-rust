@@ -1,6 +1,6 @@
 use std::{env, process::exit};
 
-use crate::commands::{add::git_add, clear::clear, commit::commit, log::log, new::new, status::status, sync::{sync, sync_force}, tag::tag};
+use crate::commands::{add::git_add, clear::clear, commit::commit, log::log, new::new, status::status, sync::{sync, sync_force}, tag::tag, uncommit::uncommit};
 pub mod commands;
 pub mod models;
 pub mod utils;
@@ -72,6 +72,9 @@ pub fn run() {
             ""
         };
         tag(desc);
+    }
+    else if args[1].eq("uncommit"){
+        uncommit();
     }
     else {
         println!("{} command not supported yet", args[1]);
