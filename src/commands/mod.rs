@@ -7,3 +7,4 @@ pub mod new;
 pub mod sync;
 pub mod tag;
 pub mod uncommit;
+pub mod push;
