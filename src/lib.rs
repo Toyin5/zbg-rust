@@ -1,6 +1,6 @@
 use std::{env, process::exit};
 
-use crate::commands::{add::git_add, clear::clear, commit::commit, done::done, log::log, new::new, push::push, status::status, sync::{sync, sync_force}, tag::tag, uncommit::uncommit};
+use crate::commands::{add::git_add, clear::clear, commit::commit, done::done, log::log, new::new, push::push, stash::stash, status::status, sync::{sync, sync_force}, tag::tag, uncommit::uncommit};
 pub mod commands;
 pub mod models;
 pub mod utils;
@@ -81,6 +81,9 @@ pub fn run() {
     }
     else if args[1].eq("done"){
         done();
+    }
+    else if args[1].eq("stash"){
+        stash();
     }
     else {
         println!("{} command not supported yet", args[1]);

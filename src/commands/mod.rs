@@ -9,3 +9,4 @@ pub mod tag;
 pub mod uncommit;
 pub mod push;
 pub mod done;
+pub mod stash;
