@@ -11,3 +11,4 @@ pub mod push;
 pub mod done;
 pub mod stash;
 pub mod switch;
+pub mod rebase;
