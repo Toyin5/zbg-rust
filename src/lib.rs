@@ -1,100 +1,143 @@
-use std::{env, process::exit};
-
+use clap::{Parser, Subcommand};
 use crate::commands::{add::git_add, clear::clear, commit::commit, done::done, log::log, new::new, push::push, rebase::rebase, stash::{stash, unstash}, status::status, switch::switch, sync::{sync, sync_force}, tag::tag, uncommit::uncommit};
+
 pub mod commands;
 pub mod models;
 pub mod utils;
 
+#[derive(Parser)]
+#[command(name = "zbg-rust")]
+#[command(about = "A Rust-based command-line tool for git commands", long_about = None)]
+struct Cli {
+    #[command(subcommand)]
+    command: Commands,
+}
+
+#[derive(Subcommand)]
+enum Commands {
+    /// Show git status
+    Status,
+
+    /// Add files to staging area
+    Add {
+        /// Files to add (empty for all)
+        #[arg(trailing_var_arg = true, allow_hyphen_values = true)]
+        files: Vec<String>,
+    },
+
+    /// Show git log
+    Log {
+        /// Number of commits to show
+        #[arg(default_value = "5")]
+        limit: usize,
+    },
+
+    /// Clear the repository
+    Clear,
+
+    /// Create a commit
+    Commit {
+        /// Commit message
+        message: String,
+    },
+
+    /// Create a new branch
+    New {
+        /// Branch name
+        branch_name: String,
+    },
+
+    /// Sync with remote
+    Sync {
+        /// Force sync
+        #[arg(short, long)]
+        force: bool,
+    },
+
+    /// Create a tag
+    Tag {
+        /// Tag description
+        desc: String,
+    },
+
+    /// Undo the last commit
+    Uncommit,
+
+    /// Push changes
+    Push,
+
+    /// Mark as done
+    Done,
+
+    /// Stash changes
+    Stash,
+
+    /// Unstash changes
+    Unstash,
+
+    /// Switch branch
+    Switch,
+
+    /// Rebase current branch
+    Rebase,
+}
+
 pub fn run() {
-    let args: Vec<String> = env::args().collect();
-    if args.len() <= 1 {
-        println!("No command provided");
-        exit(0);
-    }
-    if args[1].eq("status") {
-        status("HEAD");
-    } else if args[1].eq("add") {
-        let files: Vec<&str> = if args.len() > 2 {
-            args[2..].iter().map(|s| s.as_str()).collect()
-        } else {
-            vec![]
-        };
-        match git_add(&files) {
-            Ok(_) => {},
-            Err(e) => eprintln!("Error adding files: {}", e),
+    let cli = Cli::parse();
+
+    match cli.command {
+        Commands::Status => {
+            status("HEAD");
         }
-    }else if args[1].eq("log"){
-        let limit = if args.len() > 2 {
-            args[2].parse::<usize>().unwrap_or(5)
-        } else {
-            5
-        };
-        log(limit);
-    } else if args[1].eq("clear"){
-        clear();
-    }
-    else if args[1].eq("commit"){
-        if args.len() < 3 {
-            eprintln!("Commit message is required");
-            exit(0);
+        Commands::Add { files } => {
+            let files_refs: Vec<&str> = files.iter().map(|s| s.as_str()).collect();
+            match git_add(&files_refs) {
+                Ok(_) => {},
+                Err(e) => eprintln!("Error adding files: {}", e),
+            }
         }
-        let message = &args[2];
-        commit(message);
-    }
-    else if args[1].eq("new"){
-        if args.len() < 3 {
-            eprintln!("Branch name is required");
-            exit(0);
+        Commands::Log { limit } => {
+            log(limit);
         }
-        let branch_name = &args[2];
-        new(branch_name);
-    }
-    else if args[1].eq("sync"){
-        let flag = if args.len() > 2 {
-            args[2].as_str()
-        } else {
-            ""
-        };
-        if flag == "--force" || flag == "-f" {
-            sync_force();
-        } else {
-            sync();
+        Commands::Clear => {
+            clear();
         }
-    }
-    else if args[1].eq("tag"){
-         if args.len() < 3 {
-            eprintln!("Tag name is required");
-            exit(0);
+        Commands::Commit { message } => {
+            commit(&message);
         }
-        let desc = if args.len() > 2{
-            args[2].as_str()
-        }else{
-            ""
-        };
-        tag(desc);
-    }
-    else if args[1].eq("uncommit"){
-        uncommit();
-    }
-    else if args[1].eq("push"){
-        push();
-    }
-    else if args[1].eq("done"){
-        done();
-    }
-    else if args[1].eq("stash"){
-        stash();
-    }
-    else if args[1].eq("unstash"){
-        unstash();
-    }
-    else if args[1].eq("switch"){
-        switch();
-    }
-    else if args[1].eq("rebase"){
-        rebase();
-    }
-    else {
-        println!("{} command not supported yet", args[1]);
+        Commands::New { branch_name } => {
+            new(&branch_name);
+        }
+        Commands::Sync { force } => {
+            if force {
+                sync_force();
+            } else {
+                sync();
+            }
+        }
+        Commands::Tag { desc } => {
+            tag(&desc);
+        }
+        Commands::Uncommit => {
+            uncommit();
+        }
+        Commands::Push => {
+            push();
+        }
+        Commands::Done => {
+            done();
+        }
+        Commands::Stash => {
+            stash();
+        }
+        Commands::Unstash => {
+            unstash();
+        }
+        Commands::Switch => {
+            switch();
+        }
+        Commands::Rebase => {
+            rebase();
+        }
     }
 }
